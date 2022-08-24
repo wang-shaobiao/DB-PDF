@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+jar {
+    //详细信息参考 https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+//    archivesBaseName = 'MiniRPC'//基本的文件名
+//    archiveVersion = '0.0.3' //版本
+    manifest { //配置jar文件的manifest
+        attributes(
+                "Manifest-Version": 1.0,
+                'Main-Class': 'com.wang.db2pdf.Demo' //指定main方法所在的文件
+        )
+    }
+
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    maven {
+        allowInsecureProtocol = true
+        url "https://repo.cicc.com.cn/artifactory/public-maven-virtual/"
+    }
+}
+
+dependencies {
+    implementation('org.mybatis:mybatis:3.5.10')
+    implementation "com.itextpdf:itext7-core:7.2.1"
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.4.2'
+    implementation 'org.apache.logging.log4j:log4j-api:2.18.0'
+    implementation 'org.apache.logging.log4j:log4j-core:2.18.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}
