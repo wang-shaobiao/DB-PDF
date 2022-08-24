@@ -5,13 +5,20 @@ jar {
     //详细信息参考 https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
 //    archivesBaseName = 'MiniRPC'//基本的文件名
 //    archiveVersion = '0.0.3' //版本
-    manifest { //配置jar文件的manifest
+    manifest{//配置jar文件的manifest
         attributes(
-                "Manifest-Version": 1.0,
-                'Main-Class': 'com.wang.db2pdf.Demo' //指定main方法所在的文件
+                'Manifest-Version': 1.0,
+                'Main-Class' : 'com.wang.db2pdf.Demo',//指定main方法所在的文件
+                'Implementation-Title': 'Gradle'
         )
     }
-
+    from{
+        configurations["compileClasspath"].collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    exclude 'META-INF/*.RSA','META-INF/*.SF','META-INF/*.DSA'
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 group 'org.example'
@@ -20,7 +27,7 @@ version '1.0-SNAPSHOT'
 repositories {
     maven {
         allowInsecureProtocol = true
-        url "https://repo.cicc.com.cn/artifactory/public-maven-virtual/"
+        url 'https://maven.aliyun.com/repository/public/'
     }
 }
 
@@ -37,3 +44,25 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+//打包的jar与第三方依赖分开
+//task copyDependencies(type: Copy){
+//    from configurations.runtime
+//    into 'build/libs/lib'
+//}
+//
+//jar.dependsOn(copyDependencies)
+//
+//jar {
+//    manifest {
+//        attributes (
+//                'Manifest-Version': 1.0,
+//                'Main-Class' : 'com.xxx.web3j.Web3jApp',
+//                'Implementation-Title': 'Gradle'
+//        )
+//    }
+//    if(!configurations.runtime.isEmpty()){
+//        manifest.attributes('Class-Path': '. lib/'+ configurations.runtime.collect {
+//            it.name }.join(' lib/') )
+//    }
+//}

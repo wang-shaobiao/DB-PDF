@@ -14,28 +14,21 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.AreaBreakType;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.wang.db2pdf.dao.DataTransferDao;
-import com.wang.db2pdf.mapper.DemoMapper;
-import com.wang.db2pdf.util.DbUtils;
 import com.wang.db2pdf.util.PdfHeaderMarker;
 import com.wang.db2pdf.util.PdfPageMarker;
 import com.wang.db2pdf.util.PdfWaterMarker;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class Demo {
 
     public static void main(String[] args) throws IOException {
+        System.out.println("AMS数据库表结构文档生成中... ...");
         DataTransferDao dataTransferDao = new DataTransferDao();
         List<Map<String, Object>> listAll = dataTransferDao.getAllName("cif");
         //设置下载路径
@@ -59,7 +52,7 @@ public class Demo {
         //PdfFont f = PdfFontFactory.createFont("STSongStd-Light", "UniGB-UCS2-H");
         //使用项目内上传的楷体
         //PdfFont f = PdfFontFactory.createFont("src/main/resources/simkai.ttf", PdfEncodings.IDENTITY_H);
-        PdfFont f = PdfFontFactory.createFont(Paths.get("src","main","resources","simkai.ttf").toString(), PdfEncodings.IDENTITY_H);
+        PdfFont f = PdfFontFactory.createFont(System.getProperty("user.dir") + File.separator+"simkai.ttf", PdfEncodings.IDENTITY_H);
         //设置文档标题
         Paragraph ph = new Paragraph("AMS表结构文档");
         ph.setFont(f).setFontSize(25);
@@ -67,7 +60,7 @@ public class Demo {
         document.add(ph);
         //简单添加图片，稍微再细一点的可以见水印图片的处理方式,路径或者字节流均可
         //Image im = new Image(ImageDataFactory.create("src/main/resources/test.jpg"),36,100);
-        Image im = new Image(ImageDataFactory.create(Paths.get("src","main","resources","test.jpg").toString()),36,100);
+        Image im = new Image(ImageDataFactory.create(System.getProperty("user.dir") + File.separator+"test.jpg"),36,100);
         im.scaleAbsolute(480, 500);
         document.add(im);
         //分页
@@ -149,6 +142,8 @@ public class Demo {
 
         }
         document.close();
+        System.out.println("AMS数据库表结构文档成功生成");
+        System.out.println("路径为："+dirPath);
     }
 }
 
