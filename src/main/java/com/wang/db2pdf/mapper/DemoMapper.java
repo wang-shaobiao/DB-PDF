@@ -14,12 +14,7 @@ public interface DemoMapper {
      * @return
      */
     //这里用到${} 一般表名
-    @Select("select relname as table_name," +
-            "(select description from pg_description where objoid=oid and objsubid=0) as table_comment " +
-            "from pg_class " +
-            "where relkind ='r' and relname NOT LIKE 'pg%' AND relname NOT LIKE 'sql_%' " +
-            "and relnamespace = (select oid from pg_namespace where nspname=#{dbName} ) " +
-            "order by table_name;")
+    @Select("select table_name ,table_comment from information_schema.tables where table_schema = #{dbName};")
     List<Map<String, Object>> getAllTableNames(@Param("dbName") String dbName);
 
     /**
@@ -28,17 +23,15 @@ public interface DemoMapper {
      * @return
      */
     @Select("select " +
-            "a.attname as Field," +
-            "format_type(a.atttypid,a.atttypmod) as Type," +
-            "(case " +
-            "when (select count(*) from pg_constraint where conrelid = a.attrelid and conkey[1]=attnum and contype='p')>0 then 'PRI' " +
-            "when (select count(*) from pg_constraint where conrelid = a.attrelid and conkey[1]=attnum and contype='u')>0 then 'UNI'" +
-            "when (select count(*) from pg_constraint where conrelid = a.attrelid and conkey[1]=attnum and contype='f')>0 then 'FRI'" +
-            "else '' end) as key," +
-            "(case when a.attnotnull=true then 'NO' else 'YES' end) as Null," +
-            "col_description(a.attrelid,a.attnum) as Comment " +
-            "from pg_attribute a " +
-            "where attstattarget=-1 and attrelid = (select oid from pg_class where relname = #{tableName} " +
-            "and relnamespace=(select oid from pg_namespace where nspname=#{dbName} ));")
+            "COLUMN_NAME field, " +
+            "COLUMN_TYPE types, " +
+            "is_nullable as isnull," +
+            "column_key as iskey, " +
+            "COLUMN_COMMENT comment " +
+            "from " +
+            "INFORMATION_SCHEMA.COLUMNS " +
+            "where " +
+            "table_schema = #{dbName} " +
+            "and table_name = #{tableName}; ")
     List<Map<String, Object>> getTableColumnDetail(@Param("tableName")String tableName,@Param("dbName") String dbName);
 }

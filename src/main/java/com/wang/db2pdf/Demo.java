@@ -28,9 +28,9 @@ import java.util.Map;
 public class Demo {
 
     public static void main(String[] args) throws IOException {
-        System.out.println("AMS数据库表结构文档生成中... ...");
+        System.out.println("数据库表结构文档生成中... ...");
         DataTransferDao dataTransferDao = new DataTransferDao();
-        List<Map<String, Object>> listAll = dataTransferDao.getAllName("cif");
+        List<Map<String, Object>> listAll = dataTransferDao.getAllName("hr_otd");
         //设置下载路径
         //获取jar包所在目录
 //        ApplicationHome h = new ApplicationHome(getClass());
@@ -45,7 +45,7 @@ public class Demo {
             filePath.mkdirs();
         }
         //创建PDF文档
-        PdfWriter pdfWriter = new PdfWriter(new File(dirPath+"AMS表结构文档"+ LocalDate.now()+".pdf"));
+        PdfWriter pdfWriter = new PdfWriter(new File(dirPath+"表结构文档"+ LocalDate.now()+".pdf"));
         PdfDocument pdf = new PdfDocument(pdfWriter);
         Document document = new Document(pdf);
         //宋体
@@ -54,7 +54,7 @@ public class Demo {
         //PdfFont f = PdfFontFactory.createFont("src/main/resources/simkai.ttf", PdfEncodings.IDENTITY_H);
         PdfFont f = PdfFontFactory.createFont(System.getProperty("user.dir") + File.separator+"simkai.ttf", PdfEncodings.IDENTITY_H);
         //设置文档标题
-        Paragraph ph = new Paragraph("AMS表结构文档");
+        Paragraph ph = new Paragraph("表结构文档");
         ph.setFont(f).setFontSize(25);
         ph.setHorizontalAlignment(HorizontalAlignment.CENTER);
         document.add(ph);
@@ -66,19 +66,19 @@ public class Demo {
         //分页
         document.add(new AreaBreak(AreaBreakType.NEXT_PAGE));
         //页眉
-        pdf.addEventHandler(PdfDocumentEvent.START_PAGE,new PdfHeaderMarker(f, "AMS项目内部使用"));
+        pdf.addEventHandler(PdfDocumentEvent.START_PAGE,new PdfHeaderMarker(f, "项目内部使用"));
         //页码
         pdf.addEventHandler(PdfDocumentEvent.END_PAGE,new PdfPageMarker(f));
         //简单水印（水印图片/水印字）
-        pdf.addEventHandler(PdfDocumentEvent.INSERT_PAGE,new PdfWaterMarker(f,"AMS项目内部使用",""));
+        pdf.addEventHandler(PdfDocumentEvent.INSERT_PAGE,new PdfWaterMarker(f,"项目内部使用",""));
         /**
          * 创建表格，通过查询出来的表遍历
          */
         for (int i = 0; i < listAll.size(); i++) {
             //表名
-            String table_name = (String)listAll.get(i).get("table_name");
+            String table_name = (String)listAll.get(i).get("table_name".toUpperCase());
             //表说明
-            String table_comment = (String) listAll.get(i).get("table_comment");
+            String table_comment = (String) listAll.get(i).get("table_comment".toUpperCase());
             if (table_comment == null) {
                 table_comment = "";
             }
@@ -118,13 +118,13 @@ public class Demo {
                 String field = (String) list.get(k).get("field");
                 table.addCell(new Cell().add(new Paragraph(field + "")));
                 //table.addCell(field);
-                String type = (String) list.get(k).get("type");
+                String type = (String) list.get(k).get("types");
                 table.addCell(new Cell().add(new Paragraph(type + "")));
                 //table.addCell(type);
-                String isnull = (String) list.get(k).get("null");
+                String isnull = (String) list.get(k).get("isnull");
                 table.addCell(new Cell().add(new Paragraph(isnull + "")));
                 //table.addCell(isnull);
-                String key = (String) list.get(k).get("key");
+                String key = (String) list.get(k).get("iskey");
                 table.addCell(new Cell().add(new Paragraph(key + "")));
                 //table.addCell(key);
                 String comment = (String)list.get(k).get("comment");
